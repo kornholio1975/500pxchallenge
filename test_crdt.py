@@ -59,6 +59,50 @@ class TestLWWElementSet(unittest.TestCase):
         self.data_set.remove(payload, timestamp)
         self.assertEqual(timestamp, self.data_set._set_remove[payload])
 
+    def test_added_element_exists(self):
+        self.setUp()
+        element_payload = 'first'
+        self.data_set.add(element_payload, time.time())
+        self.assertTrue(self.data_set.exists(element_payload))
+
+    def test_removed_element_doesnt_exist(self):
+        self.setUp()
+        element_payload = 'removed'
+        self.data_set.add(element_payload, time.time())
+        self.data_set.remove(element_payload, time.time() + 10)
+        self.assertFalse(self.data_set.exists(element_payload))
+
+    def test_non_added_element_doesnt_exist(self):
+        self.setUp()
+        element_payload = 'added'
+        self.data_set.add(element_payload, time.time())
+        self.assertFalse(self.data_set.exists('never added'))
+
+    def test_element_readded_exists(self):
+        self.setUp()
+        element_payload = 'readded'
+        self.data_set.add(element_payload, time.time())
+        self.data_set.remove(element_payload, time.time() + 10)
+        self.data_set.add(element_payload, time.time() + 20)
+        self.assertTrue(self.data_set.exists(element_payload))
+
+    def test_can_get_added_elements(self):
+        self.setUp()
+        elements = {'first': time.time(), 'second': time.time()}
+        for payload, timestamp in elements.iteritems():
+            self.data_set.add(payload, timestamp)
+        self.assertEqual(len(self.data_set.get()), 2)
+        self.assertIn(elements.keys()[0], self.data_set.get())
+
+    def test_removed_element_is_removed(self):
+        self.setUp()
+        elements = {'first': time.time(), 'second': time.time()}
+        for payload, timestamp in elements.iteritems():
+            self.data_set.add(payload, timestamp)
+        self.data_set.remove(elements.keys()[0], time.time() + 10)
+        self.assertEqual(len(self.data_set.get()), 1)
+        self.assertNotIn(elements.keys()[0], self.data_set.get())
+
 if __name__ == '__main__':
     loader = unittest.TestLoader()
     suite = unittest.TestSuite([loader.loadTestsFromTestCase(TestLWWEInset), 
