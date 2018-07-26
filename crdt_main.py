@@ -5,14 +5,14 @@ class LWWEInset(dict, collections.MutableMapping):
 
     Stores a key value pair where::
         key: any serializble type storing a payload
-        value: epoch time expressed as 32bit integer representing a timestamp
+        value: epoch time expressed as float representing a timestamp
     """
     def __setitem__(self, payload, timestamp):
         #Override dict __setitem__ to enforce correct data types
         if not isinstance(payload, collections.Hashable):
             raise TypeError('unhashable type {}'.format(type(payload)))
-        if not isinstance(timestamp, int):
-            raise TypeError('timestamp expected to be an epoch time expressed in 32 bit integer')
+        if not isinstance(timestamp, float):
+            raise TypeError('timestamp expected to be an epoch time expressed as float')
         super(LWWEInset, self).__setitem__(payload, timestamp)
 
 class LWWElementSet(object):
