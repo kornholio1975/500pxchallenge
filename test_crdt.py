@@ -1,7 +1,10 @@
+import json
 import time
 import unittest
 
 import crdt_main
+import crdt_redis
+
 
 class TestLWWEInset(unittest.TestCase):
 
@@ -103,8 +106,20 @@ class TestLWWElementSet(unittest.TestCase):
         self.assertEqual(len(self.data_set.get()), 1)
         self.assertNotIn(elements.keys()[0], self.data_set.get())
 
+
+class TestLWWElementSetRedis(TestLWWElementSet):
+
+    def __init__(self, *args, **kwargs):
+        redis_params = json.loads(open('redis.json').read())
+        self.data_set = crdt_redis.LWWElementSetRedis(redis_params)
+        super(TestLWWElementSetRedis, self).__init__(*args, **kwargs)
+
+    def setUp(self):
+        self.data_set._redisclient.flushdb()
+
 if __name__ == '__main__':
     loader = unittest.TestLoader()
     suite = unittest.TestSuite([loader.loadTestsFromTestCase(TestLWWEInset), 
-                                loader.loadTestsFromTestCase(TestLWWElementSet)])
-    unittest.TextTestRunner(verbosity=2).run(suite)
+                                loader.loadTestsFromTestCase(TestLWWElementSet),
+                                loader.loadTestsFromTestCase(TestLWWElementSetRedis)])
+    unittest.TextTestRunner(verbosity=3).run(suite)
