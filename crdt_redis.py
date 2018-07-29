@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+""" Conflict Free Replicated Data Type (CRDT) implemented using Last Writer Wins (LWW) algorythm.
+    Redis used for storage
+
+    Requires::
+        redis library https://github.com/andymccurdy/redis-py
+"""
+
 import collections
 
 from crdt_main import LWWEInset, LWWElementSet
@@ -49,23 +57,24 @@ class LWWEInsetRedis(object):
 
 class LWWElementSetRedis(LWWElementSet):
     """Conflict Free Replicated Data Type (CRDT) implemented using Last Writer Wins (LWW) algorythm.
-    Uses Redis for storage
+    Inherit all methods, but use Redis for storage
 
     Usage::
         >>> import crdt_main
         >>> import redis_client.RedisClient
-        >>> redis_client = RedisClient(
+        >>> redis_client = redis_client.RedisClient(
                 {"host": "redis-19111.c8.us-east-1-3.ec2.cloud.redislabs.com",
                 "port": 19111,
                 "password": "AL0ndOaB71w4Wo4Ol59lhIHuQou7miqd"})
         >>> data_set = crdt_main.LWWElementSetRedis(redis_client)
-        >>> data_set.add('foo', 1532565895)
+        >>> data_set.add('foo', 1532565895.0)
         >>> data_set.exists('foo')
         >>> data_set.get()
-        >>> data_set.remove('foo', 1532565941)
+        >>> data_set.remove('foo', 1532565941.0)
     """
 
     def __init__(self, redis_params):
+        # Initialize inner sets with redis client
         self._redisclient = RedisClient(redis_params)
         self._set_add = LWWEInsetRedis(self._redisclient, 'set_add')
         self._set_remove = LWWEInsetRedis(self._redisclient, 'set_remove')
