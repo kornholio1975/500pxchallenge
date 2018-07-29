@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+""" Conflict Free Replicated Data Type (CRDT) implemented using Last Writer Wins (LWW) algorythm.
+    Python built in types used only.
+"""
+
 import collections
 
 class LWWEInset(dict, collections.MutableMapping):
@@ -21,10 +26,10 @@ class LWWElementSet(object):
     Usage::
         >>> import crdt_main
         >>> data_set = crdt_main.LWWElementSet()
-        >>> data_set.add('foo', 1532565895)
+        >>> data_set.add('foo', 1532565895.0)
         >>> data_set.exists('foo')
         >>> data_set.get()
-        >>> data_set.remove('foo', 1532565941)
+        >>> data_set.remove('foo', 1532565941.0)
     """
 
     def __init__(self):

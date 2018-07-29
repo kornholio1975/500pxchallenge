@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import json
 import time
 import unittest
@@ -108,7 +110,7 @@ class TestLWWElementSet(unittest.TestCase):
 
 
 class TestLWWElementSetRedis(TestLWWElementSet):
-
+    # redis implementation is only tested functionaly
     def __init__(self, *args, **kwargs):
         redis_params = json.loads(open('redis.json').read())
         self.data_set = crdt_redis.LWWElementSetRedis(redis_params)
